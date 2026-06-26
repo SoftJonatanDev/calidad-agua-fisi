@@ -1,0 +1,236 @@
+/* --- RESET Y VARIABLES --- */
+* { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+    font-family: 'Space Grotesk', sans-serif; 
+}
+
+:root {
+    --bg-main: #0F172A;
+    --bg-card: #1E293B;
+    --text-main: #F8FAFC;
+    --text-sec: #94A3B8;
+    --border-color: #334155;
+    
+    --neon-orange: #FB923C;
+    --neon-cyan: #22D3EE;
+    --neon-indigo: #818CF8;
+    --neon-pink: #F472B6;
+    
+    --alert-red: #EF4444;
+    --ok-green: #10B981;
+    --btn-blue: #3B82F6;
+    --btn-blue-hover: #2563EB;
+}
+
+body { 
+    background-color: var(--bg-main); 
+    padding: 20px; 
+    color: var(--text-main); 
+}
+
+.dashboard-container {
+    /* CAMBIO: Aumentamos a 1400px para que ocupe más pantalla y no se vea vacío */
+    max-width: 1400px;
+    margin: 0 auto;
+    background: var(--bg-main);
+    border-radius: 12px;
+}
+
+/* --- CABECERA --- */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+    flex-wrap: wrap; 
+    gap: 15px;
+}
+
+.logo-area h1 { color: var(--text-main); font-size: 1.5rem; font-weight: 700; letter-spacing: -0.5px;}
+.logo-area p { color: var(--text-sec); font-size: 0.9rem; margin-top: 4px; }
+
+.controls { 
+    display: flex; 
+    align-items: center; 
+    gap: 15px; 
+    flex-wrap: wrap;
+}
+
+.connection-status {
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
+    background: var(--bg-card);
+    padding: 8px 15px;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+}
+
+.status-dot { width: 10px; height: 10px; background-color: var(--ok-green); border-radius: 50%; box-shadow: 0 0 8px var(--ok-green);}
+#conexionTxt { font-weight: 600; color: var(--text-sec); font-size: 0.9rem;}
+
+.btn-export {
+    background-color: var(--btn-blue);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+}
+.btn-export:hover { background-color: var(--btn-blue-hover); transform: translateY(-2px); }
+
+/* --- PESTAÑAS --- */
+.tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;}
+.tab-btn {
+    padding: 10px 20px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-card);
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-sec);
+    transition: all 0.3s;
+}
+.tab-btn.active { 
+    background: rgba(59, 130, 246, 0.1); 
+    color: var(--btn-blue); 
+    border-color: var(--btn-blue); 
+}
+
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: fadeIn 0.4s ease-in-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* --- TARJETAS (VELOCÍMETROS EN VIVO) --- */
+.cards-grid {
+    display: grid;
+    /* CAMBIO: Fuerza 2 columnas iguales (2x2) */
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 30px; /* Espacio más grande entre tarjetas */
+    margin-bottom: 30px;
+}
+
+.card {
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 35px 20px; /* Más espacio interno para que se vean grandes */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    border: 1px solid var(--border-color);
+    text-align: center;
+    transition: transform 0.3s;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+.card:hover { transform: translateY(-5px); }
+
+/* CAMBIO: Textos más grandes para combinar con el nuevo tamaño */
+.card h3 { color: var(--text-sec); font-size: 1.1rem; letter-spacing: 1.5px; margin-bottom: 20px; font-weight: 600;}
+
+.gauge-container { position: relative; width: 100%; height: 160px; display: flex; justify-content: center; } /* Gráfico más alto */
+.gauge-text { position: absolute; bottom: 0; font-size: 2.8rem; font-weight: 700; display: flex; align-items: baseline; gap: 5px;} /* Números gigantes */
+.gauge-unit { font-size: 1.2rem; color: var(--text-sec); font-weight: 400;}
+
+.text-temp { color: var(--neon-orange); text-shadow: 0 0 10px rgba(251, 146, 60, 0.3); }
+.text-ph { color: var(--neon-cyan); text-shadow: 0 0 10px rgba(34, 211, 238, 0.3); }
+.text-tds { color: var(--neon-indigo); text-shadow: 0 0 10px rgba(129, 140, 248, 0.3); }
+.text-turb { color: var(--neon-pink); text-shadow: 0 0 10px rgba(244, 114, 182, 0.3); }
+
+/* --- PANEL DE ESTADO --- */
+.status-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 25px;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+.status-panel h3 { color: var(--text-sec); font-size: 0.85rem; letter-spacing: 1.5px; margin-bottom: 15px; }
+
+.status-badge {
+    display: inline-block;
+    padding: 15px 40px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    width: 100%;
+    max-width: 400px;
+    transition: all 0.3s;
+}
+.normal { 
+    background-color: rgba(16, 185, 129, 0.1); 
+    color: var(--ok-green); 
+    border: 1px solid var(--ok-green); 
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+}
+.alert { 
+    background-color: rgba(239, 68, 68, 0.1); 
+    color: var(--alert-red); 
+    border: 1px solid var(--alert-red);
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+    animation: pulseAlert 1.5s infinite;
+}
+.waiting { background-color: var(--border-color); color: var(--text-sec); }
+
+@keyframes pulseAlert {
+    0% { box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
+    50% { box-shadow: 0 0 25px rgba(239, 68, 68, 0.6); }
+    100% { box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
+}
+
+/* --- GRÁFICOS HISTÓRICOS --- */
+.chart-section-title { color: var(--text-sec); margin-bottom: 20px; text-align: center; font-weight: 400;}
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Cuadrícula 2x2 */
+    gap: 30px;
+}
+.chart-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    height: 300px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+/* --- CLASE EXCLUSIVA PARA BLOQUEAR EL DISEÑO AL EXPORTAR A PDF --- */
+.pdf-export-mode {
+    background-color: #0F172A !important;
+    padding: 20px !important;
+    width: 1400px !important; /* CAMBIO: Forza el nuevo ancho amplio de PC */
+    margin: 0 auto !important;
+}
+.pdf-export-mode .card, 
+.pdf-export-mode .status-panel, 
+.pdf-export-mode .chart-box {
+    background-color: #1E293B !important; 
+    color: #F8FAFC !important;
+    border: 1px solid #334155 !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+}
+
+/* --- RESPONSIVE MEDIA QUERIES --- */
+@media (max-width: 800px) {
+    /* Si abren desde celular, ambas secciones se apilan 1x1 y son funcionales */
+    .charts-grid, .cards-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+    header { flex-direction: column; text-align: center; }
+    .controls { justify-content: center; width: 100%;}
+    .tabs { justify-content: center; }
+    .card { padding: 25px 10px; }
+}

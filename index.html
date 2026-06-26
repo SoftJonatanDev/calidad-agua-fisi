@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel IoT - Calidad del Agua FISI</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        
+        <header>
+            <div class="logo-area">
+                <div>
+                    <h1>Sistema de Monitoreo de Calidad del Agua</h1>
+                    <p>Universidad Nacional Mayor de San Marcos - FISI</p>
+                </div>
+            </div>
+            <div class="controls">
+                <div class="connection-status">
+                    <span class="status-dot" id="dotStatus"></span>
+                    <span id="conexionTxt">Conectando...</span>
+                </div>
+                <button class="btn-export" onclick="exportarPDF()">Exportar Informe</button>
+            </div>
+        </header>
+
+        <div class="tabs" data-html2canvas-ignore="true">
+            <button class="tab-btn active" onclick="switchTab('data-view')">Vista en Vivo</button>
+            <button class="tab-btn" onclick="switchTab('graph-view')">Análisis Histórico Individual</button>
+        </div>
+
+        <div id="reporte-contenido">
+            
+            <div id="data-view" class="tab-content active">
+                <div class="cards-grid">
+                    <div class="card">
+                        <h3>TEMPERATURA</h3>
+                        <div class="gauge-container">
+                            <canvas id="gaugeTemp"></canvas>
+                            <div class="gauge-text text-temp"><span id="valTemp">--</span> <span class="gauge-unit">°C</span></div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>POTENCIAL HIDRÓGENO</h3>
+                        <div class="gauge-container">
+                            <canvas id="gaugePh"></canvas>
+                            <div class="gauge-text text-ph"><span id="valPh">--</span> <span class="gauge-unit">pH</span></div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>SÓLIDOS DISUELTOS</h3>
+                        <div class="gauge-container">
+                            <canvas id="gaugeTds"></canvas>
+                            <div class="gauge-text text-tds"><span id="valTds">--</span> <span class="gauge-unit">ppm</span></div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>TURBIDEZ</h3>
+                        <div class="gauge-container">
+                            <canvas id="gaugeTurb"></canvas>
+                            <div class="gauge-text text-turb"><span id="valTurb">--</span> <span class="gauge-unit">NTU</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="status-panel">
+                    <h3>DIAGNÓSTICO DEL SISTEMA</h3>
+                    <div id="estadoAgua" class="status-badge waiting">Sincronizando sensores...</div>
+                </div>
+            </div>
+
+            <div id="graph-view" class="tab-content">
+                <h3 class="chart-section-title">Curvas de Variación (Últimas 15 lecturas)</h3>
+                <div class="charts-grid">
+                    <div class="chart-box"><canvas id="chartTemp"></canvas></div>
+                    <div class="chart-box"><canvas id="chartPh"></canvas></div>
+                    <div class="chart-box"><canvas id="chartTds"></canvas></div>
+                    <div class="chart-box"><canvas id="chartTurb"></canvas></div>
+                </div>
+            </div>
+
+        </div> 
+    </div>
+
+    <script type="module" src="js/firebase-app.js"></script>
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
