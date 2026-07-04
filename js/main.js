@@ -132,29 +132,72 @@ window.switchTab = function(tabId) {
     event.currentTarget.classList.add('active');
 };
 
-// --- 5. EXPORTAR REPORTE A PDF (ACTUALIZADO AL NUEVO ANCHO GIGANTE) ---
+// ==========================================================
+// 5. EXPORTAR REPORTE A PDF (ACTUALIZACIÓN INMEDIATA)
+// ==========================================================
 window.exportarPDF = function() {
-    const element = document.getElementById('reporte-contenido');
-    
-    document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'block');
-    element.classList.add('pdf-export-mode');
-    
+  const element = document.getElementById('reporte-contenido');
+  
+  // 1. Mostrar todas las pestañas para la captura
+  document.querySelectorAll('.tab-content').forEach(tab => {
+    tab.style.display = 'block';
+  });
+  
+  // 2. Aplicar clases de compresión seguras
+  element.classList.add('pdf-export-mode');
+
+  // 🟢 INYECTAR TÍTULO DINÁMICO SOLO PARA EL PDF
+  const titleDiv = document.createElement('div');
+  titleDiv.id = "pdf-dynamic-title";
+  titleDiv.innerHTML = "<h2 style='text-align: center; color: #F8FAFC; margin-bottom: 25px; font-size: 28px; font-weight: bold;'>Informe de Calidad de Agua</h2>";
+  element.insertBefore(titleDiv, element.firstChild);
+
+  // 3. Forzar manualmente a Chart.js a recalcular tamaños
+  Object.values(Chart.instances).forEach(chart => {
+      chart.resize();
+  });
+
+  // 4. Timeout para garantizar el redibujado
+  setTimeout(() => {
     const opt = {
-        margin:       0.2, 
-        filename:     'Reporte_Calidad_Agua_FISI.pdf',
-        image:        { type: 'jpeg', quality: 1.0 },
-        html2canvas:  { 
-            scale: 2, 
-            useCORS: true, 
-            backgroundColor: "#0F172A", 
-            windowWidth: 1400 // CAMBIO: Ahora simula la pantalla gigante de 1400px
-        },
-        jsPDF:        { unit: 'in', format: 'a4', orientation: 'landscape' }
+      margin: [0.3, 0.3, 0.3, 0.3],
+      filename: 'Reporte_Calidad_Agua_FISI.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#0F172A",
+        windowWidth: 1024, // 🟢 Ajustado a 1024px para evitar el corte derecho
+        scrollX: 0, 
+        scrollY: 0, 
+        x: 0, 
+        y: 0  
+      },
+      jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
     };
 
     html2pdf().set(opt).from(element).save().then(() => {
-        element.classList.remove('pdf-export-mode');
-        document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = ''); 
-        document.querySelector('.tab-btn.active').click();
+      // 5. Limpieza: devolver el diseño a la normalidad en la web
+      element.classList.remove('pdf-export-mode');
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.style.display = '';
+      });
+      
+      const activeTabBtn = document.querySelector('.tab-btn.active');
+      if (activeTabBtn) {
+        activeTabBtn.click();
+      }
+
+      // 🟢 REMOVER EL TÍTULO INYECTADO
+      const injectedTitle = document.getElementById('pdf-dynamic-title');
+      if (injectedTitle) {
+          injectedTitle.remove();
+      }
+
+      // Devolver los gráficos a su tamaño web original
+      Object.values(Chart.instances).forEach(chart => {
+          chart.resize();
+      });
     });
+  }, 1000); 
 };
