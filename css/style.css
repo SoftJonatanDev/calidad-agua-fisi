@@ -206,31 +206,101 @@ header {
     break-inside: avoid;
 }
 
-/* --- CLASE EXCLUSIVA PARA BLOQUEAR EL DISEÑO AL EXPORTAR A PDF --- */
+/* ==========================================================================
+   CLASES EXCLUSIVAS PARA EXPORTAR A PDF (A PRUEBA DE FALLOS)
+   ========================================================================== */
 .pdf-export-mode {
-    background-color: #0F172A !important;
-    padding: 20px !important;
-    width: 1400px !important; /* CAMBIO: Forza el nuevo ancho amplio de PC */
-    margin: 0 auto !important;
-}
-.pdf-export-mode .card, 
-.pdf-export-mode .status-panel, 
-.pdf-export-mode .chart-box {
-    background-color: #1E293B !important; 
-    color: #F8FAFC !important;
-    border: 1px solid #334155 !important;
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
+  background-color: #0F172A !important;
+  padding: 20px !important;
+  width: 1024px !important; 
+  box-sizing: border-box !important;
+  margin: 0 !important; 
+  position: relative !important;
+  display: block !important;
 }
 
-/* --- RESPONSIVE MEDIA QUERIES --- */
-@media (max-width: 800px) {
-    /* Si abren desde celular, ambas secciones se apilan 1x1 y son funcionales */
-    .charts-grid, .cards-grid { grid-template-columns: 1fr; }
+/* 🟢 LA SOLUCIÓN AL EFECTO OPACO: Forzar visibilidad y apagar animaciones */
+.pdf-export-mode .tab-content {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  animation: none !important;
+  transform: none !important;
 }
-@media (max-width: 600px) {
-    header { flex-direction: column; text-align: center; }
-    .controls { justify-content: center; width: 100%;}
-    .tabs { justify-content: center; }
-    .card { padding: 25px 10px; }
+
+.pdf-export-mode .cards-grid,
+.pdf-export-mode .charts-grid {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  gap: 15px !important;
+}
+
+.pdf-export-mode .card {
+  background-color: #1E293B !important;
+  border: 1px solid #334155 !important;
+  width: 47% !important; 
+  margin-bottom: 10px !important;
+  padding: 10px !important; 
+  height: 180px !important; 
+  page-break-inside: avoid !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  box-sizing: border-box !important;
+}
+
+.pdf-export-mode .chart-box { 
+  background-color: #1E293B !important;
+  border: 1px solid #334155 !important;
+  width: 47% !important;
+  height: 270px !important; 
+  padding: 10px !important;
+  margin-bottom: 15px !important;
+  page-break-inside: avoid !important;
+  box-sizing: border-box !important;
+}
+
+.pdf-export-mode .gauge-container {
+  height: auto !important;
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  position: static !important; 
+}
+
+.pdf-export-mode .gauge-container canvas {
+  max-height: 85px !important; 
+  width: auto !important;
+  margin-bottom: -5px !important; 
+}
+
+.pdf-export-mode .gauge-text {
+  position: static !important;
+  bottom: auto !important;
+  font-size: 1.4rem !important; 
+  text-align: center !important;
+  display: block !important;
+  margin-top: 5px !important;
+}
+
+.pdf-export-mode .status-panel {
+  padding: 15px !important;
+  margin-top: 10px !important;
+  width: 100% !important;
+  background-color: #1E293B !important;
+  border: 1px solid #334155 !important;
+  page-break-inside: avoid !important;
+  box-sizing: border-box !important;
+}
+
+.pdf-export-mode #graph-view {
+  page-break-before: always !important;
+  padding-top: 20px !important;
+  width: 100% !important;
+  display: block !important;
+  box-sizing: border-box !important;
 }
