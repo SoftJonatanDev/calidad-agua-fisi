@@ -57,7 +57,7 @@ function initLineChart(id, label, color) {
 const lineTemp = initLineChart('chartTemp', 'Temperatura (°C)', '#FB923C');
 const linePh = initLineChart('chartPh', 'pH', '#22D3EE');
 const lineTds = initLineChart('chartTds', 'TDS (ppm)', '#818CF8');
-const lineTurb = initLineChart('chartTurb', 'Turbidez (NTU)', '#F472B6');
+const lineTurb = initLineChart('chartTurb', 'Claridad (%)', '#F472B6');
 
 // --- 3. CONEXIÓN EN TIEMPO REAL CON FIREBASE ---
 const datosRef = ref(database, 'sensor_data');
@@ -81,7 +81,7 @@ onValue(datosRef, (snapshot) => {
         updateGauge(gaugeTemp, t, 50); 
         updateGauge(gaugePh, p, 14);
         updateGauge(gaugeTds, s, 500); 
-        updateGauge(gaugeTurb, tu, 5); 
+        updateGauge(gaugeTurb, tu, 100); 
 
         // Actualizar Gráficos Históricos
         const hora = new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', second:'2-digit' });
@@ -104,13 +104,74 @@ onValue(datosRef, (snapshot) => {
         lineTds.update(); 
         lineTurb.update();
 
-        // Actualizar Alerta
-        const badge = document.getElementById("estadoAgua");
-        if (data.contamination_type) {
-            badge.innerText = data.contamination_type;
-            badge.className = "status-badge " + (data.contamination_type.toLowerCase().includes("alerta") ? "alert" : "normal");
+        // --- 4. ACTUALIZAR 4 ALERTAS INDIVIDUALES CON DIAGNÓSTICO DETALLADO ---
+        
+        // 1. Alerta de Temperatura
+        const badgeTemp = document.getElementById("badgeTemp");
+        if (t > 35.0) {
+            badgeTemp.innerText = "TEMP: ALTA (Riesgo biológico)";
+            badgeTemp.className = "status-badge alert";
+        } else {
+            badgeTemp.innerText = "TEMP: ÓPTIMA";
+            badgeTemp.className = "status-badge normal";
         }
 
+        // 2. Alerta de pH
+        const badgePh = document.getElementById("badgePh");
+        if (p < 6.5) {
+            badgePh.innerText = "pH: ÁCIDO (Riesgo corrosivo)";
+            badgePh.className = "status-badge alert";
+        } else if (p > 8.5) {
+            badgePh.innerText = "pH: ALCALINO (Agua dura)";
+            badgePh.className = "status-badge alert";
+        } else {
+            badgePh.innerText = "pH: NEUTRO (Seguro)";
+            badgePh.className = "status-badge normal";
+        }
+
+        // 3. Alerta de TDS
+        const badgeTds = document.getElementById("badgeTds");
+        if (s > 1000) {
+            badgeTds.innerText = "TDS: CRÍTICO (No potable)";
+            badgeTds.className = "status-badge alert";
+        } else if (s > 500) {
+            badgeTds.innerText = "TDS: ALTO (Exceso de sales)";
+            badgeTds.className = "status-badge alert";
+        } else {
+            badgeTds.innerText = "TDS: IDEAL (Agua limpia)";
+            badgeTds.className = "status-badge normal";
+        }
+
+        // 4. Alerta de Claridad
+        const badgeTurb = document.getElementById("badgeTurb");
+        if (tu < 60.0) {
+            badgeTurb.innerText = "CLARIDAD: BAJA (Partículas)";
+            badgeTurb.className = "status-badge alert";
+        } else {
+            badgeTurb.innerText = "CLARIDAD: ALTA (Cristalina)";
+            badgeTurb.className = "status-badge normal";
+        }
+
+        // --- 5. LÓGICA DEL VEREDICTO GENERAL ---
+        let problemasDetectados = []; 
+
+        if (t > 35.0) problemasDetectados.push("Temp Alta");
+        if (p < 6.5) problemasDetectados.push("pH Ácido");
+        if (p > 8.5) problemasDetectados.push("pH Alcalino");
+        if (s > 500) problemasDetectados.push("TDS Alto");
+        if (tu < 60.0) problemasDetectados.push("Agua Turbia");
+
+        const badgeGeneral = document.getElementById("estadoGeneral");
+        
+        if (problemasDetectados.length === 0) {
+            badgeGeneral.innerText = "AGUA POTABLE (Parámetros Normales)";
+            badgeGeneral.className = "status-badge normal";
+        } else {
+            badgeGeneral.innerText = "ALERTA: " + problemasDetectados.join(" | ");
+            badgeGeneral.className = "status-badge alert";
+        }
+
+        // Actualizar estado de conexión
         document.getElementById("conexionTxt").innerText = "Monitoreo En Vivo";
         document.getElementById("conexionTxt").style.color = "#10B981";
         document.getElementById("dotStatus").style.backgroundColor = "#10B981";
@@ -124,7 +185,7 @@ onValue(datosRef, (snapshot) => {
     document.getElementById("dotStatus").style.boxShadow = "0 0 8px #EF4444";
 });
 
-// --- 4. LÓGICA DE PESTAÑAS ---
+// --- 6. LÓGICA DE PESTAÑAS ---
 window.switchTab = function(tabId) {
     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -133,7 +194,7 @@ window.switchTab = function(tabId) {
 };
 
 // ==========================================================
-// 5. EXPORTAR REPORTE A PDF (ACTUALIZACIÓN INMEDIATA)
+// 7. EXPORTAR REPORTE A PDF (ACTUALIZACIÓN INMEDIATA)
 // ==========================================================
 window.exportarPDF = function() {
   const element = document.getElementById('reporte-contenido');
