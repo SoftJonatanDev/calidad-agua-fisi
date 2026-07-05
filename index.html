@@ -64,17 +64,45 @@
                         </div>
                     </div>
                     <div class="card">
-                        <h3>TURBIDEZ</h3>
+                        <h3>CLARIDAD DEL AGUA</h3>
                         <div class="gauge-container">
                             <canvas id="gaugeTurb"></canvas>
-                            <div class="gauge-text text-turb"><span id="valTurb">--</span> <span class="gauge-unit">NTU</span></div>
+                            <div class="gauge-text text-turb"><span id="valTurb">--</span> <span class="gauge-unit">%</span></div>
                         </div>
                     </div>
                 </div>
 
                 <div class="status-panel">
-                    <h3>DIAGNÓSTICO DEL SISTEMA</h3>
-                    <div id="estadoAgua" class="status-badge waiting">Sincronizando sensores...</div>
+                    <h3 style="margin-bottom: 15px; color: #F8FAFC;">VEREDICTO GENERAL DEL SISTEMA</h3>
+                    <div id="estadoGeneral" class="status-badge waiting" style="font-size: 1.2em; padding: 15px; margin-bottom: 25px; border: 2px solid rgba(255,255,255,0.1);">
+                        Sincronizando sensores...
+                    </div>
+                    
+                    <h3 style="font-size: 0.9em; color: #94A3B8; text-transform: uppercase; letter-spacing: 1px;">Desglose Detallado por Sensor</h3>
+                    
+                    <style>
+                        .status-badges-container {
+                            display: flex;
+                            flex-wrap: wrap;
+                            gap: 15px;
+                            justify-content: center;
+                            margin-top: 15px;
+                        }
+                        .status-badges-container .status-badge {
+                            flex: 1 1 20%;
+                            min-width: 160px;
+                            font-size: 14px;
+                            padding: 12px;
+                            margin: 0;
+                        }
+                    </style>
+
+                    <div class="status-badges-container">
+                        <div id="badgeTemp" class="status-badge waiting">Temp: Analizando...</div>
+                        <div id="badgePh" class="status-badge waiting">pH: Analizando...</div>
+                        <div id="badgeTds" class="status-badge waiting">TDS: Analizando...</div>
+                        <div id="badgeTurb" class="status-badge waiting">Claridad: Analizando...</div>
+                    </div>
                 </div>
             </div>
 
